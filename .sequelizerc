@@ -1,0 +1,17 @@
+// import { resolve } from 'path';
+const path = require('path');
+
+// module.exports = {
+//   'config': path.resolve('src', 'config', 'database.ts'),
+//   'models-path': path.resolve('src', 'data', 'postgres', 'models'),
+//   'migrations-path': path.resolve('src', 'data', 'postgres', 'migrations'),
+//   'seeders-path': path.resolve('src', 'data', 'postgres', 'seeders'),
+// };
+
+module.exports = {
+  'config': path.resolve('dist', 'config', 'database.js'),
+  'models-path': path.resolve('dist', 'data', 'postgres', 'models'),
+  // 'migrations-path': path.resolve('dist', 'data', 'postgres', 'migrations'),
+  'migrations-path': path.resolve('src', 'data', 'postgres', 'migrations'),
+  'seeders-path': path.resolve('dist', 'data', 'postgres', 'seeders'),
+};
