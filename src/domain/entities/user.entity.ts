@@ -15,6 +15,7 @@ export class UserEntity {
         public email: string,
         public password: string,
         public role: UserRole | string,
+        public is_verified: boolean,
         // public created_at: Date,
         // public updated_at: Date
     ){}

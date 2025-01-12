@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 
 import { IAuthRepository } from "../../domain/repositories/auth.repository.interface";
-import { RegisterUserDto } from "../../domain/dtos";
+import { RegisterUserDto, LoginUserDto } from "../../domain/dtos";
+import { RegisterUser, LoginUser } from "../../domain/use-case";
 
 import { handleError } from '../../shared/handleError';
 
@@ -24,15 +25,28 @@ export class AuthController {
 
         if(error) return res.status(400).json({error});
 
-        this.authRepository.registerUser(registerUserDto!)
-            .then(user => res.json(user))
+        new RegisterUser(this.authRepository)
+            .execute(registerUserDto!)
+            .then(data=> res.json(data))
             .catch(error => handleError(error, res));
+
+        // this.authRepository.registerUser(registerUserDto!)
+        //     .then(user => res.json(user))
+        //     .catch(error => handleError(error, res));
 
         // res.json({message: 'Login User'});
     }
 
     loginUser = (req: Request, res: Response) => {
-        res.json({message: 'Login User'});
+
+        const [error, loginUserDto] = LoginUserDto.create(req.body);
+        if(error) return res.status(400).json({error});
+
+        new LoginUser(this.authRepository)
+            .execute(loginUserDto!)
+            .then(data=> res.json(data))
+            .catch(error => handleError(error, res));
+
     }
 
 }

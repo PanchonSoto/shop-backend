@@ -4,6 +4,7 @@ import { IAuthDatasource } from "../../domain/datasources";
 import { RegisterUserDto } from "../../domain/dtos";
 import { UserEntity } from "../../domain/entities";
 import { UsersModel } from "../../data/postgres/models/user.model";
+import { LoginUserDto } from '../../domain/dtos/auth/login-user.dto';
 
 
 
@@ -19,8 +20,41 @@ export class AuthDataSource implements IAuthDatasource {
     ) { }
 
 
-    loginUser(): Promise<string> {
-        throw new Error("Method not implemented.");
+    async loginUser(loginUserDto: LoginUserDto): Promise<UserEntity> {
+
+        const { email } = loginUserDto;
+
+        try {
+
+            const exist = await UsersModel.findOne({
+                where: { email: email }
+            });
+            if (!exist) throw CustomError.badRequest('User does not exist');
+
+            const match = BcryptAdapter.compare(loginUserDto.password, exist.password);
+            if(!match) throw CustomError.badRequest('Incorrect credentials');
+
+            const { password, ...userWithoutPassword } = exist;
+
+            return new UserEntity(
+                userWithoutPassword.dataValues.id!,
+                userWithoutPassword.dataValues.name,
+                userWithoutPassword.dataValues.email,
+                "",
+                userWithoutPassword.dataValues.role,
+                userWithoutPassword.dataValues.is_verified!,
+            );
+
+        } catch (error) {
+
+            console.log({ error })
+            if (error instanceof Error) {
+                throw error;
+            }
+
+            throw CustomError.interlServerError();
+        }
+
     }
 
     async registerUser(registerUserDto: RegisterUserDto): Promise<UserEntity> {
@@ -41,22 +75,13 @@ export class AuthDataSource implements IAuthDatasource {
                 role,
             });
 
-
-
-            // return {
-            //     id: user.id!,
-            //     email: user.email,
-            //     name: user.name,
-            //     role: user.role,
-            //     password: "",
-            // }
-
             return new UserEntity(
                 user.id!,
                 user.email,
                 user.name,
                 user.role,
                 "",
+                user.is_verified!
             );
 
             // return Promise.resolve(user);
