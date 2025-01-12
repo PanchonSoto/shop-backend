@@ -1,10 +1,26 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { postgresDBInstance } from "../postgres-instance/postgres.instance";
 
 
 const sequelize = postgresDBInstance.getSequelize();
 
-export const Users = sequelize.define(
+
+export enum UserRole {
+    NEGOCIO = 'NEGOCIO',
+    CLIENTE = 'CLIENTE',
+}
+interface UserInferface {
+    id?: number;
+    name: string;
+    email: string;
+    password: string;
+    role: UserRole | string;
+    is_verified?: boolean;
+}
+
+interface UserModel extends Model<UserInferface>, UserInferface {}
+
+export const UsersModel = sequelize.define<UserModel>(
     'Users',
     {
         id: {
@@ -38,5 +54,7 @@ export const Users = sequelize.define(
     },
     {
         // Other model options go here
+        createdAt: false,
+        updatedAt: false,
     },
 );

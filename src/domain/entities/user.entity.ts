@@ -10,12 +10,12 @@ export enum UserRole {
 export class UserEntity {
 
     constructor(
-        public id: string,
+        public id: number,
         public name: string,
         public email: string,
         public password: string,
-        public role: UserRole,
-        public created_at: Date,
-        public updated_at: Date
+        public role: UserRole | string,
+        // public created_at: Date,
+        // public updated_at: Date
     ){}
 }

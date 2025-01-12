@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import { IAuthRepository } from "../../domain/repositories/auth.repository.interface";
 import { RegisterUserDto } from "../../domain/dtos";
 
+import { handleError } from '../../shared/handleError';
+
 
 
 
@@ -24,7 +26,7 @@ export class AuthController {
 
         this.authRepository.registerUser(registerUserDto!)
             .then(user => res.json(user))
-            .catch(error => res.status(500).json({error}));
+            .catch(error => handleError(error, res));
 
         // res.json({message: 'Login User'});
     }

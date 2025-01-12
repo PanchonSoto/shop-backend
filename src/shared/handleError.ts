@@ -1,0 +1,16 @@
+import { Response } from "express";
+
+import { CustomError } from "../domain/errors/custom.error";
+
+
+
+export const handleError =(error:unknown, res: Response) => {
+    if (error instanceof CustomError) {
+        return res.status(error.statusCode).json({error: error.message});
+    }
+
+    console.log('handleErrorSHARED',error);
+
+    return res.status(500).json({error: 'Interal server error'});
+
+}
