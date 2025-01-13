@@ -17,3 +17,8 @@ export * from './product/create-product.ucase';
 export * from './product/delete-product.ucase';
 export * from './product/get-product.ucase';
 export * from './product/update-product.ucase';
+
+export * from './orders/create-order.ucase';
+export * from './orders/delete-order.ucase';
+export * from './orders/get-orders.ucase';
+export * from './orders/update-order.ucase';
