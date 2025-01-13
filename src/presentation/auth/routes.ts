@@ -13,8 +13,8 @@ export class AuthRoutes {
 
         const router = Router();
 
-        const database = new AuthDataSource();
-        const authRepository = new AuthRepository(database);
+        const authDatasource = new AuthDataSource();
+        const authRepository = new AuthRepository(authDatasource);
 
         const controller = new AuthController(authRepository);
 

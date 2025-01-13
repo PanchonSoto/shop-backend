@@ -1,5 +1,5 @@
 import { IAuthDatasource } from "../../domain/datasources";
-import { IAuthRepository } from "../../domain/repositories/auth.repository.interface";
+import { IAuthRepository } from "../../domain/repositories";
 import { RegisterUserDto } from "../../domain/dtos";
 import { UserEntity } from "../../domain/entities";
 import { LoginUserDto } from '../../domain/dtos/auth/login-user.dto';

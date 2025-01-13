@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { AuthRoutes } from "./auth/routes";
+import { UserRoutes } from "./user/routes";
 
 
 
@@ -12,6 +13,7 @@ export class AppRoutes {
 
         //app routes
         router.use('/api/auth', AuthRoutes.routes);
+        router.use('/api/user', UserRoutes.routes);
 
 
 
