@@ -12,3 +12,8 @@ export * from './negocio/create-negocio.ucase';
 export * from './negocio/delete-negocio.ucase';
 export * from './negocio/get-negocio.ucase';
 export * from './negocio/update-negocio.ucase';
+
+export * from './product/create-product.ucase';
+export * from './product/delete-product.ucase';
+export * from './product/get-product.ucase';
+export * from './product/update-product.ucase';
