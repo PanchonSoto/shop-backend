@@ -18,7 +18,7 @@ interface NegocioInterface {
 interface NegocioModel extends Model<NegocioInterface>, NegocioInterface {}
 
 export const NegocioModel = sequelize.define<NegocioModel>(
-    'Negocio',
+    'negocios',
     {
         id: {
           type: DataTypes.INTEGER,
