@@ -71,7 +71,7 @@ export const OrdersModel = sequelize.define<OrdersModel>(
   },
   {
     tableName: 'orders',
-    timestamps: true,
+    timestamps: false,
     underscored: true,
   }
 );

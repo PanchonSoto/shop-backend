@@ -1,6 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import { postgresDBInstance } from "../postgres-instance/postgres.instance";
 import { OrdersModel } from "./orders.model";
+import { OrderItemModel } from "./order-items.model";
 
 
 const sequelize = postgresDBInstance.getSequelize();
@@ -76,3 +77,6 @@ ProductModel.belongsToMany(OrdersModel, {
   otherKey: 'order_id',
   as: 'orders',
 });
+
+OrderItemModel.belongsTo(ProductModel, { foreignKey: 'product_id' });
+
