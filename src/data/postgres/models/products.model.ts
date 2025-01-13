@@ -6,7 +6,7 @@ const sequelize = postgresDBInstance.getSequelize();
 
 
 
-interface NegocioInterface {
+interface ProductInterface {
   id?: number;
   negocio_id: string;
   name: string;
@@ -15,9 +15,9 @@ interface NegocioInterface {
   available: boolean;
 }
 
-interface NegocioModel extends Model<NegocioInterface>, NegocioInterface {}
+interface ProductModel extends Model<ProductInterface>, ProductInterface {}
 
-export const NegocioModel = sequelize.define<NegocioModel>(
+export const ProductModel = sequelize.define<ProductModel>(
     'products',
     {
       id: {
