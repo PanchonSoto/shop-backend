@@ -15,6 +15,11 @@ export class AuthRepository implements IAuthRepository {
     ) {}
 
 
+
+    activateAccount(email: string): Promise<any> {
+        return this.authDataSource.activateAccount(email);
+    }
+
     registerUser(registerUserDto: RegisterUserDto): Promise<UserEntity> {
         return this.authDataSource.registerUser(registerUserDto);
     }

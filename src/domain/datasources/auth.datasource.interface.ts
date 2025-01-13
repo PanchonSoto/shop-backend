@@ -10,6 +10,7 @@ export abstract class IAuthDatasource {
 
     abstract registerUser(registerUserDto: RegisterUserDto): Promise<UserEntity>;
 
+    abstract activateAccount(email: string): Promise<any>;
 
 
 }
