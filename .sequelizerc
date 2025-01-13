@@ -13,5 +13,5 @@ module.exports = {
   'models-path': path.resolve('dist', 'data', 'postgres', 'models'),
   // 'migrations-path': path.resolve('dist', 'data', 'postgres', 'migrations'),
   'migrations-path': path.resolve('src', 'data', 'postgres', 'migrations'),
-  'seeders-path': path.resolve('dist', 'data', 'postgres', 'seeders'),
+  'seeders-path': path.resolve('src', 'data', 'postgres', 'seeders'),
 };
