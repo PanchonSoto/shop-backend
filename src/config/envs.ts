@@ -10,7 +10,7 @@ export const envs = {
     POSTGRES_DB: get('POSTGRES_DB').required().asString(),
     POSTGRES_PASSWORD: get('POSTGRES_PASSWORD').required().asString(),
     POSTGRES_HOST: get('POSTGRES_HOST').required().asString(),
-    // JWT_SEED: get('JWT_SEED').required().asString(),
+    JWT_SEED: get('JWT_SEED').required().asString(),
 
     // WEBSERVICE_URL: get('WEBSERVICE_URL').required().asString(),
 
