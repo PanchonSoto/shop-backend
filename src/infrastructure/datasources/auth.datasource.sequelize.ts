@@ -20,6 +20,25 @@ export class AuthDataSource implements IAuthDatasource {
     ) { }
 
 
+
+
+    async activateAccount(email: string): Promise<any> {
+        const user = await UsersModel.findOne({ where: { email } });
+
+        if (!user) {
+            throw CustomError.notFound('user not found');
+        }
+
+        if (user.is_verified) {
+          throw CustomError.badRequest('account already active');
+        }
+
+        const activatedUser = await user.update({ is_verified: true });
+
+        return activatedUser;
+
+    }
+
     async loginUser(loginUserDto: LoginUserDto): Promise<UserEntity> {
 
         const { email } = loginUserDto;
@@ -30,6 +49,8 @@ export class AuthDataSource implements IAuthDatasource {
                 where: { email: email }
             });
             if (!exist) throw CustomError.badRequest('User does not exist');
+
+            if(!exist.is_verified) throw CustomError.forbidden('Access deneid please activate your account.');
 
             const match = BcryptAdapter.compare(loginUserDto.password, exist.password);
             if(!match) throw CustomError.badRequest('Incorrect credentials');

@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 
 import { IAuthRepository } from "../../domain/repositories/auth.repository.interface";
 import { RegisterUserDto, LoginUserDto } from "../../domain/dtos";
-import { RegisterUser, LoginUser } from "../../domain/use-case";
+import { RegisterUser, LoginUser, ActivateAccount } from "../../domain/use-case";
+import { RegexUtils } from "../../config/regex-utils";
 
 import { handleError } from '../../shared/handleError';
 
@@ -17,6 +18,20 @@ export class AuthController {
     ){}
 
 
+
+    activateAccount = (req: Request, res: Response) => {
+        const { email } = req.body;
+
+        if(!email) return res.status(400).json({error: 'provide an email.'});
+
+        if(!RegexUtils.email.test(email)) return res.status(400).json({error: 'provide a valid email.'});
+
+        new ActivateAccount(this.authRepository)
+            .execute(email)
+            .then(data=>res.json(data))
+            .catch(error=> handleError(error,res));
+
+    }
 
     //los controladores llaman a los casos de uso
     registerUser = (req: Request, res: Response) => {

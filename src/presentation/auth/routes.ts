@@ -21,6 +21,7 @@ export class AuthRoutes {
         //auth routes
         router.post('/login', controller.loginUser);
         router.post('/register', controller.registerUser);
+        router.post('/activate',controller.activateAccount);
 
 
         return router;

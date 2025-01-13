@@ -8,5 +8,6 @@ export abstract class IAuthRepository {
 
     abstract loginUser(loginUserDto: LoginUserDto): Promise<UserEntity>;
     abstract registerUser(registerUserDto: RegisterUserDto): Promise<UserEntity>;
+    abstract activateAccount(email: string): Promise<any>;
 
 }
