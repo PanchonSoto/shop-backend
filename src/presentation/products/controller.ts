@@ -29,19 +29,19 @@ export class ProductsController {
 
     new GetProducts(this.productRepository)
       .execute(user, search)
-      .then((users) => res.status(200).json(users))
+      .then((products) => res.status(200).json(products))
       .catch((error) => handleError(error, res));
   };
 
   createProduct = (req: Request, res: Response) => {
-    const [error, createUserDto] = CreateProductDto.create(req.body);
+    const [error, createProductDto] = CreateProductDto.create(req.body);
 
     console.log("errr arr", error);
     if (error?.length) return res.status(400).json({ error });
 
     new CreateProduct(this.productRepository)
-      .execute(createUserDto!)
-      .then((user) => res.status(200).json(user))
+      .execute(createProductDto!)
+      .then((createdProduct) => res.status(200).json(createdProduct))
       .catch((error) => handleError(error, res));
   };
 
@@ -75,7 +75,7 @@ export class ProductsController {
 
     new UpdateProduct(this.productRepository)
       .execute(productId, updateData)
-      .then((user) => res.status(200).json(user))
+      .then((updatedProduct) => res.status(200).json(updatedProduct))
       .catch((error) => handleError(error, res));
   };
 
