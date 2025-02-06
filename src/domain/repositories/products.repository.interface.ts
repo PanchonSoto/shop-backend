@@ -1,16 +1,17 @@
-import { ProductEntity } from "../entities";
-import { CreateProductDto } from '../dtos/products/create-product.dto';
-
+import { ProductEntity, UserEntity } from "../entities";
+import { CreateProductDto } from "../dtos/products/create-product.dto";
 
 export abstract class IProductRepository {
+  abstract getProducts(user: UserEntity): Promise<ProductEntity[]>;
 
+  abstract createProduct(
+    createProductDto: CreateProductDto
+  ): Promise<ProductEntity>;
 
-    abstract getProducts(): Promise<ProductEntity[]>
+  abstract deleteProduct(id: number): Promise<void>;
 
-    abstract createProduct(createProductDto:CreateProductDto): Promise<ProductEntity>;
-
-    abstract deleteProduct(id: number): Promise<void>;
-
-    abstract updateProduct(ProductId: number, data: Partial<ProductEntity>): Promise<ProductEntity>;
-
+  abstract updateProduct(
+    ProductId: number,
+    data: Partial<ProductEntity>
+  ): Promise<ProductEntity>;
 }
