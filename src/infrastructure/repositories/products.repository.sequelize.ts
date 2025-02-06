@@ -12,16 +12,19 @@ export class ProductsRepository implements IProductRepository {
     private readonly negocioDataSource: INegocioDataSource
   ) {}
 
-  async getProducts(user: UserEntity): Promise<ProductEntity[]> {
+  async getProducts(
+    user: UserEntity,
+    searchParam?: string
+  ): Promise<ProductEntity[]> {
     // if user's role its "NEGOCIO" return its owns
     if (user.role === "NEGOCIO") {
       const userNegocio = await this.negocioDataSource.getNegocioByUser(
         user.id
       );
-      return this.productDataSource.getProductsByNegocio(userNegocio.id);
+      return this.productDataSource.getProducts(searchParam, userNegocio.id);
     }
     // if user's role any other return all
-    return this.productDataSource.getProducts();
+    return this.productDataSource.getProducts(searchParam, undefined);
   }
 
   createProduct(createProductDto: CreateProductDto): Promise<ProductEntity> {

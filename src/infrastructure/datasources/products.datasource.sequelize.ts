@@ -1,3 +1,5 @@
+import { Op } from "sequelize";
+
 import { CreateProductDto } from "../../domain/dtos/products/create-product.dto";
 import { CustomError } from "../../domain/errors/custom.error";
 import { IProductDataSource } from "../../domain/datasources";
@@ -9,56 +11,40 @@ import { NegocioModel } from "../../data/postgres/models/negocio.model";
 export class ProductsDataSource implements IProductDataSource {
   constructor() {}
 
-  async getProductsByNegocio(negocioId: number): Promise<ProductEntity[]> {
-    try {
-      const products = await ProductModel.findAll({
-        where: { negocio_id: negocioId },
-      });
+  async getProducts(
+    searchParam?: string,
+    negocioId?: number
+  ): Promise<ProductEntity[]> {
+    //sequelize conditions
+    const whereCondition: any = {};
 
-      return products.map(
-        (product) =>
-          new ProductEntity(
-            product.id!,
-            product.negocio_id,
-            product.name,
-            product.stock,
-            product.price,
-            product.available
-          )
-      );
-    } catch (error) {
-      console.log({ error });
-      if (error instanceof Error) {
-        throw error;
+    //if search param add condition to search
+    if (searchParam) {
+      //verify if number of search param is number
+      if (!isNaN(Number(searchParam))) {
+        whereCondition.id = Number(searchParam);
+      } else {
+        whereCondition.name = { [Op.iLike]: `%${searchParam}%` };
       }
-
-      throw CustomError.interlServerError();
     }
-  }
-
-  async getProducts(): Promise<ProductEntity[]> {
-    try {
-      const products = await ProductModel.findAll();
-
-      return products.map(
-        (product) =>
-          new ProductEntity(
-            product.id!,
-            product.negocio_id,
-            product.name,
-            product.stock,
-            product.price,
-            product.available
-          )
-      );
-    } catch (error) {
-      console.log({ error });
-      if (error instanceof Error) {
-        throw error;
-      }
-
-      throw CustomError.interlServerError();
+    //if user is negocio search its products
+    if (negocioId) {
+      whereCondition.negocio_id = negocioId;
     }
+
+    const products = await ProductModel.findAll({ where: whereCondition });
+
+    return products.map(
+      (product) =>
+        new ProductEntity(
+          product.id!,
+          product.negocio_id,
+          product.name,
+          product.stock,
+          product.price,
+          product.available
+        )
+    );
   }
 
   async createProduct(

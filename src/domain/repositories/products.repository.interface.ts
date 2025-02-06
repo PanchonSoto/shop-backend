@@ -2,7 +2,10 @@ import { ProductEntity, UserEntity } from "../entities";
 import { CreateProductDto } from "../dtos/products/create-product.dto";
 
 export abstract class IProductRepository {
-  abstract getProducts(user: UserEntity): Promise<ProductEntity[]>;
+  abstract getProducts(
+    user: UserEntity,
+    searchParam?: string
+  ): Promise<ProductEntity[]>;
 
   abstract createProduct(
     createProductDto: CreateProductDto
