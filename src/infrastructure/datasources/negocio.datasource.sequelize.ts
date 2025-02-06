@@ -5,129 +5,136 @@ import { NegocioEntity } from "../../domain/entities";
 import { NegocioModel } from "../../data/postgres/models/negocio.model";
 import { UsersModel } from "../../data/postgres/models/user.model";
 
-
-
 export class NegocioDataSource implements INegocioDataSource {
+  constructor() {}
 
-    constructor(){}
+  async getNegocioByUser(userId: number): Promise<NegocioEntity> {
+    try {
+      const userNegocio = await NegocioModel.findOne({
+        where: { user_id: userId },
+      });
 
+      if (!userNegocio)
+        throw CustomError.badRequest("User negocio does not exists.");
 
-    async getNegocios(): Promise<NegocioEntity[]> {
+      return new NegocioEntity(
+        userNegocio.id!,
+        userNegocio.name,
+        userNegocio.user_id
+      );
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof Error) {
+        throw error;
+      }
 
-        try {
-
-            const negocios = await NegocioModel.findAll();
-
-
-            return negocios.map(negocio => new NegocioEntity(
-                negocio.id!,
-                negocio.name,
-                negocio.user_id,
-            ));
-
-
-        } catch (error) {
-            console.log({ error })
-            if (error instanceof Error) {
-                throw error;
-            }
-
-            throw CustomError.interlServerError();
-        }
-
+      throw CustomError.interlServerError();
     }
+  }
 
-    async createNegocio(userId:number, name: string): Promise<NegocioEntity> {
+  async getNegocios(): Promise<NegocioEntity[]> {
+    try {
+      const negocios = await NegocioModel.findAll();
 
-        try {
+      return negocios.map(
+        (negocio) =>
+          new NegocioEntity(negocio.id!, negocio.name, negocio.user_id)
+      );
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof Error) {
+        throw error;
+      }
 
-            const existNegocio = await NegocioModel.findOne({
-                where: { name: name }
-            });
-            if (existNegocio) throw CustomError.badRequest('Negocio already exists');
-
-            const existUserNegocio = await NegocioModel.findOne({
-                where: { user_id: userId }
-            });
-            if (existUserNegocio) throw CustomError.badRequest('User already have a negocio.');
-
-            const userExists = await UsersModel.count({
-                where: { id: userId }
-            });
-            if (userExists===0) throw CustomError.badRequest('User does not exist');
-
-            const createdNegocio = await NegocioModel.create({
-                name: name,
-                user_id: userId,
-            });
-
-            return new NegocioEntity(
-                createdNegocio.id!,
-                createdNegocio.name,
-                createdNegocio.user_id,
-            );
-
-        } catch (error) {
-            console.log({ error })
-            if (error instanceof Error) {
-                throw error;
-            }
-
-            throw CustomError.interlServerError();
-        }
-
+      throw CustomError.interlServerError();
     }
+  }
 
+  async createNegocio(userId: number, name: string): Promise<NegocioEntity> {
+    try {
+      const existNegocio = await NegocioModel.findOne({
+        where: { name: name },
+      });
+      if (existNegocio) throw CustomError.badRequest("Negocio already exists");
 
-    async deleteNegocio(id: number): Promise<void> {
-        try {
+      const existUserNegocio = await NegocioModel.findOne({
+        where: { user_id: userId },
+      });
+      if (existUserNegocio)
+        throw CustomError.badRequest("User already have a negocio.");
 
-            const negocio = await NegocioModel.findByPk(id);
+      const userExists = await UsersModel.count({
+        where: { id: userId },
+      });
+      if (userExists === 0) throw CustomError.badRequest("User does not exist");
 
-            if (!negocio) {
-                throw CustomError.badRequest('Negocio does not exist.');
-            }
+      const createdNegocio = await NegocioModel.create({
+        name: name,
+        user_id: userId,
+      });
 
-            await negocio.destroy();
+      return new NegocioEntity(
+        createdNegocio.id!,
+        createdNegocio.name,
+        createdNegocio.user_id
+      );
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof Error) {
+        throw error;
+      }
 
-        } catch (error) {
-            console.log({ error })
-            if (error instanceof Error) {
-                throw error;
-            }
-
-            throw CustomError.interlServerError();
-        }
+      throw CustomError.interlServerError();
     }
+  }
 
-    async updateNegocio(negocioId: number, data: Partial<NegocioEntity>): Promise<NegocioEntity> {
+  async deleteNegocio(id: number): Promise<void> {
+    try {
+      const negocio = await NegocioModel.findByPk(id);
 
-        try {
+      if (!negocio) {
+        throw CustomError.badRequest("Negocio does not exist.");
+      }
 
-        const [updatedRows, [updatedNegocio]] = await NegocioModel.update(data, {
-            where: { id: negocioId, user_id: data.user_id },
-            returning: true,
-        });
+      await negocio.destroy();
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof Error) {
+        throw error;
+      }
 
-        if (updatedRows===0) {
-            throw CustomError.notFound('Negocio or user-negocio relation not exist.');
-        }
+      throw CustomError.interlServerError();
+    }
+  }
 
-        return new NegocioEntity(
-            updatedNegocio.id!,
-            updatedNegocio.name,
-            updatedNegocio.user_id,
+  async updateNegocio(
+    negocioId: number,
+    data: Partial<NegocioEntity>
+  ): Promise<NegocioEntity> {
+    try {
+      const [updatedRows, [updatedNegocio]] = await NegocioModel.update(data, {
+        where: { id: negocioId, user_id: data.user_id },
+        returning: true,
+      });
+
+      if (updatedRows === 0) {
+        throw CustomError.notFound(
+          "Negocio or user-negocio relation not exist."
         );
+      }
 
+      return new NegocioEntity(
+        updatedNegocio.id!,
+        updatedNegocio.name,
+        updatedNegocio.user_id
+      );
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof Error) {
+        throw error;
+      }
 
-        } catch (error) {
-            console.log({ error })
-            if (error instanceof Error) {
-                throw error;
-            }
-
-            throw CustomError.interlServerError();
-        }
+      throw CustomError.interlServerError();
     }
-
+  }
 }
