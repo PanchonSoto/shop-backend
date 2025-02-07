@@ -2,6 +2,8 @@ import { ProductEntity } from "../entities";
 import { CreateProductDto } from "../dtos/products/create-product.dto";
 
 export abstract class IProductDataSource {
+  abstract getProductById(id: number): Promise<ProductEntity | null>;
+
   abstract getProducts(
     searchParam?: string,
     negocioId?: number
