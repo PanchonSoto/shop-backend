@@ -11,6 +11,21 @@ import { NegocioModel } from "../../data/postgres/models/negocio.model";
 export class ProductsDataSource implements IProductDataSource {
   constructor() {}
 
+  async getProductById(id: number): Promise<ProductEntity | null> {
+    const product = await ProductModel.findByPk(id);
+
+    if (!product) return null;
+
+    return new ProductEntity(
+      product.id!,
+      product.negocio_id,
+      product.name,
+      product.stock,
+      product.price,
+      product.available
+    );
+  }
+
   async getProducts(
     searchParam?: string,
     negocioId?: number
@@ -53,6 +68,7 @@ export class ProductsDataSource implements IProductDataSource {
     const { available, name, negocio_id, price, stock } = createProductDto;
 
     try {
+      //todo: probably must move this negocio validation to an use case or service
       const existNegocio = await NegocioModel.count({
         where: { id: negocio_id },
       });

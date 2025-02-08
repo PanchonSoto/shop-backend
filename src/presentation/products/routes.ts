@@ -3,6 +3,7 @@ import { Router } from "express";
 import { ProductsController } from "./controller";
 
 import { AuthMiddleware } from "../../infrastructure/middlewares/auth.middleware";
+import { RoleMiddleware } from "../../infrastructure/middlewares/admin.middleware";
 import {
   ProductsDataSource,
   NegocioDataSource,
@@ -20,18 +21,32 @@ export class ProductsRoutes {
     const negocioDatasource = new NegocioDataSource();
 
     const negocioRepository = new NegocioRepository(negocioDatasource);
-    const userRepository = new ProductsRepository(
+    const productRepository = new ProductsRepository(
       productsDatasource,
       negocioRepository
     );
 
-    const controller = new ProductsController(userRepository);
+    const controller = new ProductsController(
+      productRepository,
+      negocioRepository
+    );
 
-    //user routes
-    //!todo poner middleware de roles
-    router.post("/create", controller.createProduct);
-    router.put("/update/:productId", controller.updateProduct);
-    router.delete("/delete/:productId", controller.deleteProduct);
+    //products routes
+    router.post(
+      "/create",
+      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "NEGOCIO"])],
+      controller.createProduct
+    );
+    router.put(
+      "/update/:productId",
+      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "NEGOCIO"])],
+      controller.updateProduct
+    );
+    router.delete(
+      "/delete/:productId",
+      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "NEGOCIO"])],
+      controller.deleteProduct
+    );
     router.get("/", [AuthMiddleware.validateJWT], controller.getProducts);
 
     return router;

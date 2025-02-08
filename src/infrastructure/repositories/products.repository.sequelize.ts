@@ -12,10 +12,16 @@ export class ProductsRepository implements IProductRepository {
     private readonly negocioDataSource: INegocioDataSource
   ) {}
 
+  getProductById(id: number): Promise<ProductEntity | null> {
+    return this.productDataSource.getProductById(id);
+  }
+
   async getProducts(
     user: UserEntity,
     searchParam?: string
   ): Promise<ProductEntity[]> {
+    //! mover logica de negocio al use case
+
     // if user's role its "NEGOCIO" return its owns
     if (user.role === "NEGOCIO") {
       const userNegocio = await this.negocioDataSource.getNegocioByUser(

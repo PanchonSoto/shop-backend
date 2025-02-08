@@ -14,6 +14,7 @@ export class NegocioDataSource implements INegocioDataSource {
         where: { user_id: userId },
       });
 
+      //todo: consider return a null to validate on use cases.
       if (!userNegocio)
         throw CustomError.badRequest("User negocio does not exists.");
 
