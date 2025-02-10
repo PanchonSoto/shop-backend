@@ -1,92 +1,77 @@
-import { Request, Response} from "express";
+import { Request, Response } from "express";
 import { INegocioRepository } from "../../domain/repositories";
-import { CreateNegocio, DeleteNegocio, GetNegocio, UpdateNegocio } from "../../domain/use-case";
+import {
+  CreateNegocio,
+  DeleteNegocio,
+  GetNegocio,
+  UpdateNegocio,
+} from "../../domain/use-case";
 
 import { handleError } from "../../shared/handleError";
 
-
 interface NegocioFields {
-    id: number,
-    name: string,
-    user_id: number,
+  id: number;
+  name: string;
+  user_id: number;
 }
 
 export class NegocioController {
+  constructor(private readonly negocioRepository: INegocioRepository) {}
 
-    constructor(
-        private readonly negocioRepository: INegocioRepository
-    ){}
+  getNegocio = (req: Request, res: Response) => {
+    new GetNegocio(this.negocioRepository)
+      .execute()
+      .then((negocios) => res.status(200).json(negocios))
+      .catch((error) => handleError(error, res));
+  };
 
+  createNegocio = (req: Request, res: Response) => {
+    const user = req.user;
+    const { name } = req.body;
 
-
-    getNegocio = (req: Request, res: Response) => {
-
-        new GetNegocio(this.negocioRepository)
-            .execute()
-            .then((users)=>res.status(200).json(users))
-            .catch(error => handleError(error, res));
-
+    if (!name) {
+      return res.status(400).json({ error: "negocio name is required." });
     }
 
-    createNegocio = (req: Request, res: Response) => {
+    new CreateNegocio(this.negocioRepository)
+      .execute(user!.id, name)
+      .then((createdNegocio) => res.status(200).json(createdNegocio))
+      .catch((error) => handleError(error, res));
+  };
 
-        const userId = Number(req.params.userId);
+  updateNegocio = (req: Request, res: Response) => {
+    const user = req.user;
+    const negocioId = Number(req.params.negocioId);
+    const { name } = req.body;
 
-        if (isNaN(userId)) {
-            return res.status(400).json({error:'Invalid id.'});
-        }
-
-
-        const { name } = req.body;
-
-        if (!name) {
-            return res.status(400).json({error:'negocio name is required.'});
-        }
-
-        new CreateNegocio(this.negocioRepository)
-            .execute(userId, name)
-            .then((user)=>res.status(200).json(user))
-            .catch(error => handleError(error, res));
-
+    if (isNaN(negocioId)) {
+      return res.status(400).json({ error: "Invalid id." });
     }
 
-    updateNegocio = (req: Request, res: Response) => {
-
-        const negocioId = Number(req.params.negocioId);
-
-        if (isNaN(negocioId)) {
-            return res.status(400).json({error:'Invalid id.'});
-        }
-
-
-        const { name, user_id } = req.body;
-
-        if (!name || !user_id) {
-            return res.status(400).json({error:'name and user_id are required.'});
-        }
-
-        const updateData: Partial<NegocioFields> = {
-            ...(name && { name }),
-            ...(user_id && {user_id})
-        };
-
-        new UpdateNegocio(this.negocioRepository)
-            .execute(negocioId, updateData)
-            .then((user)=>res.status(200).json(user))
-            .catch(error => handleError(error, res));
-
+    if (!name) {
+      return res.status(400).json({ error: "name are required." });
     }
 
-    deleteNegocio = (req: Request, res: Response) => {
+    const updateData: Partial<NegocioFields> = {
+      ...(name && { name }),
+      ...(user!.id && { user_id: user!.id }),
+    };
 
-        const userId = Number(req.params.userId);
+    new UpdateNegocio(this.negocioRepository)
+      .execute(user!.id, updateData)
+      .then((negocioUpdated) => res.status(200).json(negocioUpdated))
+      .catch((error) => handleError(error, res));
+  };
 
-        if(!userId) return res.sendStatus(400).json({error:'userId is required.'});
+  deleteNegocio = (req: Request, res: Response) => {
+    const negocioId = Number(req.params.negocioId);
 
-        new DeleteNegocio(this.negocioRepository)
-            .execute(userId)
-            .then(()=>res.sendStatus(204))
-            .catch(error => handleError(error, res));
+    if (!negocioId)
+      return res.sendStatus(400).json({ error: "negocioId is required." });
 
-    }
+    new DeleteNegocio(this.negocioRepository)
+      .execute(negocioId)
+      .then(() => res.sendStatus(204))
+      .catch((error) => handleError(error, res));
+  };
 }

@@ -6,7 +6,8 @@ export abstract class IProductRepository {
 
   abstract getProducts(
     user: UserEntity,
-    searchParam?: string
+    searchParam?: string,
+    negocioId?: number
   ): Promise<ProductEntity[]>;
 
   abstract createProduct(

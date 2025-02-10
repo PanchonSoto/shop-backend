@@ -8,15 +8,38 @@ import { UsersModel } from "../../data/postgres/models/user.model";
 export class NegocioDataSource implements INegocioDataSource {
   constructor() {}
 
-  async getNegocioByUser(userId: number): Promise<NegocioEntity> {
+  //obtain negocios by name and id
+  async verifyNegocioExists(
+    negocioId?: number,
+    name?: string
+  ): Promise<number> {
+    try {
+      const whereCondition: any = {};
+
+      if (negocioId) {
+        whereCondition.id = negocioId;
+      }
+      if (name) {
+        whereCondition.name = name;
+      }
+
+      const existNegocio = await NegocioModel.count({
+        where: whereCondition,
+      });
+
+      return existNegocio;
+    } catch (error) {
+      throw CustomError.interlServerError("Internal server error");
+    }
+  }
+
+  async getNegocioByUser(userId: number): Promise<NegocioEntity | null> {
     try {
       const userNegocio = await NegocioModel.findOne({
         where: { user_id: userId },
       });
 
-      //todo: consider return a null to validate on use cases.
-      if (!userNegocio)
-        throw CustomError.badRequest("User negocio does not exists.");
+      if (!userNegocio) return null;
 
       return new NegocioEntity(
         userNegocio.id!,
@@ -24,11 +47,6 @@ export class NegocioDataSource implements INegocioDataSource {
         userNegocio.user_id
       );
     } catch (error) {
-      console.log({ error });
-      if (error instanceof Error) {
-        throw error;
-      }
-
       throw CustomError.interlServerError();
     }
   }
@@ -42,28 +60,12 @@ export class NegocioDataSource implements INegocioDataSource {
           new NegocioEntity(negocio.id!, negocio.name, negocio.user_id)
       );
     } catch (error) {
-      console.log({ error });
-      if (error instanceof Error) {
-        throw error;
-      }
-
       throw CustomError.interlServerError();
     }
   }
 
   async createNegocio(userId: number, name: string): Promise<NegocioEntity> {
     try {
-      const existNegocio = await NegocioModel.findOne({
-        where: { name: name },
-      });
-      if (existNegocio) throw CustomError.badRequest("Negocio already exists");
-
-      const existUserNegocio = await NegocioModel.findOne({
-        where: { user_id: userId },
-      });
-      if (existUserNegocio)
-        throw CustomError.badRequest("User already have a negocio.");
-
       const userExists = await UsersModel.count({
         where: { id: userId },
       });
@@ -94,7 +96,7 @@ export class NegocioDataSource implements INegocioDataSource {
       const negocio = await NegocioModel.findByPk(id);
 
       if (!negocio) {
-        throw CustomError.badRequest("Negocio does not exist.");
+        throw CustomError.notFound("Negocio does not exist.");
       }
 
       await negocio.destroy();

@@ -1,16 +1,10 @@
 import { CreateProductDto } from "../../domain/dtos/products/create-product.dto";
-import {
-  INegocioDataSource,
-  IProductDataSource,
-} from "../../domain/datasources";
+import { IProductDataSource } from "../../domain/datasources";
 import { IProductRepository } from "../../domain/repositories";
 import { ProductEntity, UserEntity } from "../../domain/entities";
 
 export class ProductsRepository implements IProductRepository {
-  constructor(
-    private readonly productDataSource: IProductDataSource,
-    private readonly negocioDataSource: INegocioDataSource
-  ) {}
+  constructor(private readonly productDataSource: IProductDataSource) {}
 
   getProductById(id: number): Promise<ProductEntity | null> {
     return this.productDataSource.getProductById(id);
@@ -18,19 +12,10 @@ export class ProductsRepository implements IProductRepository {
 
   async getProducts(
     user: UserEntity,
-    searchParam?: string
+    searchParam?: string,
+    negocioId?: number
   ): Promise<ProductEntity[]> {
-    //! mover logica de negocio al use case
-
-    // if user's role its "NEGOCIO" return its owns
-    if (user.role === "NEGOCIO") {
-      const userNegocio = await this.negocioDataSource.getNegocioByUser(
-        user.id
-      );
-      return this.productDataSource.getProducts(searchParam, userNegocio.id);
-    }
-    // if user's role any other return all
-    return this.productDataSource.getProducts(searchParam, undefined);
+    return this.productDataSource.getProducts(searchParam, negocioId);
   }
 
   createProduct(createProductDto: CreateProductDto): Promise<ProductEntity> {

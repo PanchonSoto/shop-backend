@@ -21,10 +21,7 @@ export class ProductsRoutes {
     const negocioDatasource = new NegocioDataSource();
 
     const negocioRepository = new NegocioRepository(negocioDatasource);
-    const productRepository = new ProductsRepository(
-      productsDatasource,
-      negocioRepository
-    );
+    const productRepository = new ProductsRepository(productsDatasource);
 
     const controller = new ProductsController(
       productRepository,

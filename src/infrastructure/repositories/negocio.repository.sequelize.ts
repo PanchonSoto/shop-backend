@@ -5,7 +5,18 @@ import { INegocioRepository } from "../../domain/repositories";
 export class NegocioRepository implements INegocioRepository {
   constructor(private readonly negocioDataSource: INegocioDataSource) {}
 
-  getNegocioByUser(userId: number): Promise<NegocioEntity> {
+  async verifyNegocioExists(
+    negocioId?: number,
+    name?: string
+  ): Promise<boolean> {
+    const count = await this.negocioDataSource.verifyNegocioExists(
+      negocioId,
+      name
+    );
+    return count > 0;
+  }
+
+  getNegocioByUser(userId: number): Promise<NegocioEntity | null> {
     return this.negocioDataSource.getNegocioByUser(userId);
   }
 

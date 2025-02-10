@@ -33,7 +33,7 @@ export class ProductsController {
     const user = req.user;
     const search = req.query.search as string | undefined;
 
-    new GetProducts(this.productRepository)
+    new GetProducts(this.productRepository, this.negocioRepository)
       .execute(user!, search)
       .then((products) => res.status(200).json(products))
       .catch((error) => handleError(error, res));
