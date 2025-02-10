@@ -7,7 +7,7 @@ const sequelize = postgresDBInstance.getSequelize();
 
 interface ProductInterface {
   id?: number;
-  negocio_id: number;
+  store_id: number;
   name: string;
   stock: number;
   price: number;
@@ -25,11 +25,11 @@ export const ProductModel = sequelize.define<ProductModel>(
       autoIncrement: true,
       allowNull: false,
     },
-    negocio_id: {
+    store_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "Negocios",
+        model: "Stores",
         key: "id",
       },
       onUpdate: "CASCADE",

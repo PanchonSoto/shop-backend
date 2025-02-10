@@ -6,7 +6,7 @@ import { IProductDataSource } from "../../domain/datasources";
 import { ProductEntity } from "../../domain/entities";
 
 import { ProductModel } from "../../data/postgres/models/products.model";
-import { NegocioModel } from "../../data/postgres/models/negocio.model";
+import { StoreModel } from "../../data/postgres/models/store.model";
 
 export class ProductsDataSource implements IProductDataSource {
   constructor() {}
@@ -18,7 +18,7 @@ export class ProductsDataSource implements IProductDataSource {
 
     return new ProductEntity(
       product.id!,
-      product.negocio_id,
+      product.store_id,
       product.name,
       product.stock,
       product.price,
@@ -28,7 +28,7 @@ export class ProductsDataSource implements IProductDataSource {
 
   async getProducts(
     searchParam?: string,
-    negocioId?: number
+    storeId?: number
   ): Promise<ProductEntity[]> {
     //sequelize conditions
     const whereCondition: any = {};
@@ -42,9 +42,9 @@ export class ProductsDataSource implements IProductDataSource {
         whereCondition.name = { [Op.iLike]: `%${searchParam}%` };
       }
     }
-    //if user is negocio search its products
-    if (negocioId) {
-      whereCondition.negocio_id = negocioId;
+    //if user is store search its products
+    if (storeId) {
+      whereCondition.store_id = storeId;
     }
 
     const products = await ProductModel.findAll({ where: whereCondition });
@@ -53,7 +53,7 @@ export class ProductsDataSource implements IProductDataSource {
       (product) =>
         new ProductEntity(
           product.id!,
-          product.negocio_id,
+          product.store_id,
           product.name,
           product.stock,
           product.price,
@@ -65,27 +65,27 @@ export class ProductsDataSource implements IProductDataSource {
   async createProduct(
     createProductDto: CreateProductDto
   ): Promise<ProductEntity> {
-    const { available, name, negocio_id, price, stock } = createProductDto;
+    const { available, name, store_id, price, stock } = createProductDto;
 
     try {
-      //todo: probably must move this negocio validation to an use case or service
-      const existNegocio = await NegocioModel.count({
-        where: { id: negocio_id },
+      //todo: probably must move this store validation to an use case or service
+      const existStore = await StoreModel.count({
+        where: { id: store_id },
       });
-      if (existNegocio === 0)
-        throw CustomError.badRequest("Negocio does not exists");
+      if (existStore === 0)
+        throw CustomError.badRequest("Store does not exists");
 
       const createdProduct = await ProductModel.create({
         available,
         name,
-        negocio_id,
+        store_id,
         price,
         stock,
       });
 
       return new ProductEntity(
         createdProduct.id!,
-        createdProduct.negocio_id,
+        createdProduct.store_id,
         createdProduct.name,
         createdProduct.stock,
         createdProduct.price,
@@ -131,14 +131,12 @@ export class ProductsDataSource implements IProductDataSource {
       });
 
       if (updatedRows === 0) {
-        throw CustomError.notFound(
-          "Negocio or user-negocio relation not exist."
-        );
+        throw CustomError.notFound("Store or user-store relation not exist.");
       }
 
       return new ProductEntity(
         updatedProduct.id!,
-        updatedProduct.negocio_id,
+        updatedProduct.store_id,
         updatedProduct.name,
         updatedProduct.stock,
         updatedProduct.price,

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 
@@ -12,13 +12,13 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
 
-    await queryInterface.createTable('orders', {
+    await queryInterface.createTable("orders", {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      negocio_id: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -27,9 +27,9 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM('pending', 'refund', 'completed', 'cancelled'),
+        type: Sequelize.ENUM("pending", "refund", "completed", "cancelled"),
         allowNull: false,
-        defaultValue: 'pending',
+        defaultValue: "pending",
       },
       subtotal: {
         type: Sequelize.DECIMAL(10, 2),
@@ -63,6 +63,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('orders');
-  }
+    await queryInterface.dropTable("orders");
+  },
 };

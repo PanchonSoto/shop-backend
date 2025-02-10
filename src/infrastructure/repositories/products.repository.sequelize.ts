@@ -13,9 +13,9 @@ export class ProductsRepository implements IProductRepository {
   async getProducts(
     user: UserEntity,
     searchParam?: string,
-    negocioId?: number
+    storeId?: number
   ): Promise<ProductEntity[]> {
-    return this.productDataSource.getProducts(searchParam, negocioId);
+    return this.productDataSource.getProducts(searchParam, storeId);
   }
 
   createProduct(createProductDto: CreateProductDto): Promise<ProductEntity> {

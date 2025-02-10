@@ -1,12 +1,12 @@
 import { ProductEntity, UserEntity } from "../../entities";
-import { IProductRepository, INegocioRepository } from "../../repositories";
+import { IProductRepository, IStoreRepository } from "../../repositories";
 
 import { CustomError } from "../../errors/custom.error";
 
 export class UpdateProduct {
   constructor(
     private readonly productRepository: IProductRepository,
-    private readonly negocioRepository: INegocioRepository
+    private readonly storeRepository: IStoreRepository
   ) {}
 
   async execute(
@@ -20,16 +20,16 @@ export class UpdateProduct {
     if (!product)
       throw CustomError.notFound(`Product: "${productId}" don't found.`);
 
-    let negocioId: number | null = null;
-    if (user.role === "NEGOCIO") {
-      const negocio = await this.negocioRepository.getNegocioByUser(user.id);
-      if (!negocio)
-        throw CustomError.notFound(`User's Negocio: "${user.id}" don't found.`);
-      negocioId = negocio.id;
+    let storeId: number | null = null;
+    if (user.role === "STORE") {
+      const store = await this.storeRepository.getStoreByUser(user.id);
+      if (!store)
+        throw CustomError.notFound(`User's Store: "${user.id}" don't found.`);
+      storeId = store.id;
     }
 
     // permissions
-    if (user.role !== "ADMIN" && Number(product.negocio_id) !== negocioId) {
+    if (user.role !== "ADMIN" && Number(product.store_id) !== storeId) {
       throw CustomError.forbidden(
         "Unauthorize you not have permission to do this action."
       );

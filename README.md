@@ -5,13 +5,17 @@ Readme para levantar el proyecto de la prueba técnica full stack.
 ## Pasos de Instalación
 
 ### 1. Instalar Dependencias
+
 Ejecuta el siguiente comando para instalar todas las dependencias necesarias:
+
 ```bash
 npm install
 ```
 
 ### 2. Configurar Variables de Entorno
+
 Crea un archivo `.env` en la raíz del proyecto y define las siguientes variables:
+
 ```env
 PORT=
 POSTGRES_USER=
@@ -24,38 +28,50 @@ JWT_SEED=
 Completa los valores según tu configuración.
 
 ### 3. Configurar Docker
+
 - Asegúrate de que Docker esté instalado y funcionando.
 - Verifica que no haya ningún contenedor de PostgreSQL ejecutándose en el puerto que usarás.
 - En la raíz del proyecto, ejecuta el siguiente comando:
+
 ```bash
 docker compose up -d
 ```
 
 ### 4. Migraciones
+
 Para que Sequelize pueda utilizar las migraciones, transpila los archivos a JavaScript ejecutando:
+
 ```bash
 npm run migrate
 ```
 
 ### 5. Seeds
+
 Para que Sequelize genere los seed, puedes ejecutar el siguiente comando:
+
 ```bash
 npm run seed
 ```
+
 Para que Sequelize borre los seed, puedes ejecutar el siguiente comando:
+
 ```bash
 npm run deleteseed
 ```
 
 ### 6. Ejecutar el Servidor en Modo Desarrollo
+
 Inicia el servidor con el siguiente comando:
+
 ```bash
 npm run dev
 ```
 
 ## Notas
+
 - Asegúrate de que el archivo `.env` tenga valores válidos antes de iniciar el proyecto.
 - Si necesitas detener los contenedores Docker, puedes usar:
+
 ```bash
 docker compose down
 
@@ -87,18 +103,18 @@ Accede a la colección de Postman para probar la API:
 - **Update Users**
   `PUT /api/user/update/7`
 
-## Negocio
-- **Obtener Negocios**
-  `GET /api/negocio/`
+## Store
+- **Obtener Stores**
+  `GET /api/store/`
 
-- **Update Negocios**
-  `PUT /api/negocio/update/4`
+- **Update Stores**
+  `PUT /api/store/update/4`
 
-- **Crear Negocio**
-  `POST /api/negocio/create/6` *(userid)*
+- **Crear Store**
+  `POST /api/store/create/6` *(userid)*
 
-- **Borrar Negocio**
-  `DELETE /api/negocio/delete/4`
+- **Borrar Store**
+  `DELETE /api/store/delete/4`
 
 ## Products
 - **Obtener Producto**
@@ -122,3 +138,4 @@ Accede a la colección de Postman para probar la API:
 
 - **Actualizar Order**
   `PUT /api/orders/update/2`
+```

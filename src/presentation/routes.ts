@@ -5,7 +5,7 @@ import { RoleMiddleware } from "../infrastructure/middlewares/admin.middleware";
 
 import { AuthRoutes } from "./auth/routes";
 import { UserRoutes } from "./user/routes";
-import { NegocioRoutes } from "./negocio/routes";
+import { StoreRoutes } from "./store/routes";
 import { ProductsRoutes } from "./products/routes";
 import { OrdersRoutes } from "./orders/routes";
 
@@ -17,9 +17,9 @@ export class AppRoutes {
     router.use("/api/auth", AuthRoutes.routes);
     router.use("/api/user", UserRoutes.routes);
     router.use(
-      "/api/negocio",
-      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "NEGOCIO"])],
-      NegocioRoutes.routes
+      "/api/store",
+      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "STORE"])],
+      StoreRoutes.routes
     );
     router.use("/api/products", ProductsRoutes.routes);
     router.use("/api/orders", OrdersRoutes.routes);

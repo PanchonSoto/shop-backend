@@ -6,11 +6,11 @@ import { AuthMiddleware } from "../../infrastructure/middlewares/auth.middleware
 import { RoleMiddleware } from "../../infrastructure/middlewares/admin.middleware";
 import {
   ProductsDataSource,
-  NegocioDataSource,
+  StoreDataSource,
 } from "../../infrastructure/datasources";
 import {
   ProductsRepository,
-  NegocioRepository,
+  StoreRepository,
 } from "../../infrastructure/repositories";
 
 export class ProductsRoutes {
@@ -18,30 +18,30 @@ export class ProductsRoutes {
     const router = Router();
 
     const productsDatasource = new ProductsDataSource();
-    const negocioDatasource = new NegocioDataSource();
+    const storeDatasource = new StoreDataSource();
 
-    const negocioRepository = new NegocioRepository(negocioDatasource);
+    const storeRepository = new StoreRepository(storeDatasource);
     const productRepository = new ProductsRepository(productsDatasource);
 
     const controller = new ProductsController(
       productRepository,
-      negocioRepository
+      storeRepository
     );
 
     //products routes
     router.post(
       "/create",
-      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "NEGOCIO"])],
+      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "STORE"])],
       controller.createProduct
     );
     router.put(
       "/update/:productId",
-      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "NEGOCIO"])],
+      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "STORE"])],
       controller.updateProduct
     );
     router.delete(
       "/delete/:productId",
-      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "NEGOCIO"])],
+      [AuthMiddleware.validateJWT, RoleMiddleware(["ADMIN", "STORE"])],
       controller.deleteProduct
     );
     router.get("/", [AuthMiddleware.validateJWT], controller.getProducts);

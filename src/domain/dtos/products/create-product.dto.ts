@@ -1,6 +1,6 @@
 export class CreateProductDto {
   private constructor(
-    public negocio_id: number,
+    public store_id: number,
     public name: string,
     public stock: number,
     public price: number,
@@ -11,17 +11,17 @@ export class CreateProductDto {
   static create(object: {
     [key: string]: any;
   }): [string[]?, CreateProductDto?] {
-    const { negocio_id, name, stock, price, available } = object;
+    const { store_id, name, stock, price, available } = object;
     const errors = [];
 
     // if (!name) return ['name is required'];
-    // if (!negocio_id) return ['negocio_id is required'];
+    // if (!store_id) return ['store_id is required'];
     // if (!stock) return ['stock is required'];
 
-    if (!negocio_id) {
-      errors.push("negocio_id is required");
-    } else if (typeof negocio_id !== "number") {
-      errors.push("negocio_id must be a valid id");
+    if (!store_id) {
+      errors.push("store_id is required");
+    } else if (typeof store_id !== "number") {
+      errors.push("store_id must be a valid id");
     }
 
     if (!name) {
@@ -57,11 +57,8 @@ export class CreateProductDto {
     if (errors.length > 0)
       return [
         errors,
-        new CreateProductDto(negocio_id, name, stock, price, available),
+        new CreateProductDto(store_id, name, stock, price, available),
       ];
-    return [
-      [],
-      new CreateProductDto(negocio_id, name, stock, price, available),
-    ];
+    return [[], new CreateProductDto(store_id, name, stock, price, available)];
   }
 }

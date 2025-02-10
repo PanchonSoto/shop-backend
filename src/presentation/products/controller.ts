@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import {
-  INegocioRepository,
+  IStoreRepository,
   IProductRepository,
 } from "../../domain/repositories";
 import {
@@ -16,7 +16,7 @@ import { CreateProductDto } from "../../domain/dtos/products/create-product.dto"
 
 interface ProductFields {
   id: number;
-  negocio_id: number;
+  store_id: number;
   name: string;
   stock: number;
   price: number;
@@ -26,14 +26,14 @@ interface ProductFields {
 export class ProductsController {
   constructor(
     private readonly productRepository: IProductRepository,
-    private readonly negocioRepository: INegocioRepository
+    private readonly storeRepository: IStoreRepository
   ) {}
 
   getProducts = (req: Request, res: Response) => {
     const user = req.user;
     const search = req.query.search as string | undefined;
 
-    new GetProducts(this.productRepository, this.negocioRepository)
+    new GetProducts(this.productRepository, this.storeRepository)
       .execute(user!, search)
       .then((products) => res.status(200).json(products))
       .catch((error) => handleError(error, res));
@@ -45,7 +45,7 @@ export class ProductsController {
 
     if (error?.length) return res.status(400).json({ error });
 
-    new CreateProduct(this.productRepository, this.negocioRepository)
+    new CreateProduct(this.productRepository, this.storeRepository)
       .execute(user!, createProductDto!)
       .then((createdProduct) => res.status(200).json(createdProduct))
       .catch((error) => handleError(error, res));
@@ -58,7 +58,7 @@ export class ProductsController {
       return res.status(400).json({ error: "Invalid id." });
     }
 
-    const { negocio_id, name, stock, price, available } = req.body;
+    const { store_id, name, stock, price, available } = req.body;
     const user = req.user;
 
     if (!name || !productId) {
@@ -68,7 +68,7 @@ export class ProductsController {
     const updateData: Partial<ProductFields> = {
       ...(productId && { productId }),
       ...(name && { name }),
-      ...(negocio_id && { negocio_id }),
+      ...(store_id && { store_id }),
       ...(stock !== undefined && { stock }),
       ...(price !== undefined && { price }),
       ...(available !== undefined && { available }),
@@ -80,7 +80,7 @@ export class ProductsController {
         .json({ error: "At least one field must be provided to update." });
     }
 
-    new UpdateProduct(this.productRepository, this.negocioRepository)
+    new UpdateProduct(this.productRepository, this.storeRepository)
       .execute(user!, productId, updateData)
       .then((updatedProduct) => res.status(200).json(updatedProduct))
       .catch((error) => handleError(error, res));
@@ -93,7 +93,7 @@ export class ProductsController {
     if (!productId)
       return res.sendStatus(400).json({ error: "productId is required." });
 
-    new DeleteProduct(this.productRepository, this.negocioRepository)
+    new DeleteProduct(this.productRepository, this.storeRepository)
       .execute(productId, user!)
       .then(() => res.sendStatus(204))
       .catch((error) => handleError(error, res));

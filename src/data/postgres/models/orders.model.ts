@@ -4,37 +4,33 @@ import { postgresDBInstance } from "../postgres-instance/postgres.instance";
 import { ProductModel } from "./products.model";
 import { OrderItemModel } from "./order-items.model";
 
-
 const sequelize = postgresDBInstance.getSequelize();
-
-
 
 interface OrdersAttributes {
   id?: number;
-  negocio_id: number;
+  store_id: number;
   user_id: number;
-  status: 'pending' | 'processing' | 'completed' | 'cancelled';
+  status: "pending" | "processing" | "completed" | "cancelled";
   subtotal: number;
   tax: number;
   total: number;
 }
 
+interface OrdersCreationAttributes extends Optional<OrdersAttributes, "id"> {}
 
-interface OrdersCreationAttributes extends Optional<OrdersAttributes, 'id'> {}
-
-
-interface OrdersModel extends Model<OrdersAttributes, OrdersCreationAttributes>, OrdersAttributes {}
-
+interface OrdersModel
+  extends Model<OrdersAttributes, OrdersCreationAttributes>,
+    OrdersAttributes {}
 
 export const OrdersModel = sequelize.define<OrdersModel>(
-  'orders',
+  "orders",
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    negocio_id: {
+    store_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -43,9 +39,9 @@ export const OrdersModel = sequelize.define<OrdersModel>(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM('pending', 'refund', 'completed', 'cancelled'),
+      type: DataTypes.ENUM("pending", "refund", "completed", "cancelled"),
       allowNull: false,
-      defaultValue: 'pending',
+      defaultValue: "pending",
     },
     subtotal: {
       type: DataTypes.DECIMAL(10, 2),
@@ -70,20 +66,18 @@ export const OrdersModel = sequelize.define<OrdersModel>(
     },
   },
   {
-    tableName: 'orders',
+    tableName: "orders",
     timestamps: false,
     underscored: true,
   }
 );
 
-
-
 OrdersModel.hasMany(OrderItemModel, {
-  foreignKey: 'order_id',
-  as: 'items',
+  foreignKey: "order_id",
+  as: "items",
 });
 
 OrderItemModel.belongsTo(OrdersModel, {
-  foreignKey: 'order_id',
-  as: 'order',
+  foreignKey: "order_id",
+  as: "order",
 });

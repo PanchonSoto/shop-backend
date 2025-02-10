@@ -6,10 +6,10 @@ export * from "./user/delete-user.ucase";
 export * from "./user/get-users.ucase";
 export * from "./user/update-user.ucase";
 
-export * from "./negocio/create-negocio.ucase";
-export * from "./negocio/delete-negocio.ucase";
-export * from "./negocio/get-negocio.ucase";
-export * from "./negocio/update-negocio.ucase";
+export * from "./store/create-store.ucase";
+export * from "./store/delete-store.ucase";
+export * from "./store/get-store.ucase";
+export * from "./store/update-store.ucase";
 
 export * from "./product/create-product.ucase";
 export * from "./product/delete-product.ucase";

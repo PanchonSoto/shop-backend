@@ -4,7 +4,7 @@ import { postgresDBInstance } from "../postgres-instance/postgres.instance";
 const sequelize = postgresDBInstance.getSequelize();
 
 export enum UserRole {
-  NEGOCIO = "NEGOCIO",
+  STORE = "STORE",
   CLIENTE = "CLIENTE",
   ADMIN = "ADMIN",
 }
@@ -43,7 +43,7 @@ export const UsersModel = sequelize.define<UserModel>(
     role: {
       type: DataTypes.STRING(50),
       validate: {
-        isIn: [["NEGOCIO", "CLIENTE", "ADMIN"]],
+        isIn: [["STORE", "CLIENTE", "ADMIN"]],
       },
     },
     is_verified: {

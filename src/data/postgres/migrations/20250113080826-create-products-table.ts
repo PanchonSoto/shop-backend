@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 /** @type {import('sequelize-cli').Migration} */
 
 module.exports = {
   // @ts-ignore
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add altering commands here.
      *
@@ -12,22 +12,22 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
 
-    await queryInterface.createTable('products', {
+    await queryInterface.createTable("products", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      negocio_id: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'negocios',
-          key: 'id',
+          model: "stores",
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       name: {
         type: Sequelize.STRING,
@@ -51,13 +51,13 @@ module.exports = {
   },
 
   // @ts-ignore
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     /**
      * Add reverting commands here.
      *
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('products');
-  }
+    await queryInterface.dropTable("products");
+  },
 };

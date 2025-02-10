@@ -1,30 +1,28 @@
 import { ProductEntity, UserEntity } from "../../entities";
 import { CustomError } from "../../errors/custom.error";
-import { INegocioRepository, IProductRepository } from "../../repositories";
+import { IStoreRepository, IProductRepository } from "../../repositories";
 
 export class GetProducts {
   constructor(
     private readonly productRepository: IProductRepository,
-    private readonly negocioRepository: INegocioRepository
+    private readonly storeRepository: IStoreRepository
   ) {}
 
   async execute(
     user: UserEntity,
     searchParam?: string
   ): Promise<ProductEntity[]> {
-    //validate if user its a negocio
-    if (user.role === "NEGOCIO") {
-      const negocio = await this.negocioRepository.getNegocioByUser(user.id);
+    //validate if user its a store
+    if (user.role === "STORE") {
+      const store = await this.storeRepository.getStoreByUser(user.id);
 
-      if (!negocio)
-        throw CustomError.notFound(
-          `User's: ${user.id} negocio does not exists.`
-        );
-      //if negocio found send its id to return its owns products
+      if (!store)
+        throw CustomError.notFound(`User's: ${user.id} store does not exists.`);
+      //if store found send its id to return its owns products
       return await this.productRepository.getProducts(
         user,
         searchParam,
-        negocio.id
+        store.id
       );
     }
     //if not return all products (client user or admin)

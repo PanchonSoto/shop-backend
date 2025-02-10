@@ -6,7 +6,7 @@ export abstract class IProductDataSource {
 
   abstract getProducts(
     searchParam?: string,
-    negocioId?: number
+    storeId?: number
   ): Promise<ProductEntity[]>;
 
   abstract createProduct(

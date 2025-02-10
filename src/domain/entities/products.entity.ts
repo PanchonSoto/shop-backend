@@ -1,7 +1,7 @@
 export class ProductEntity {
   constructor(
     public id: number,
-    public negocio_id: number,
+    public store_id: number,
     public name: string,
     public stock: number,
     public price: number,
