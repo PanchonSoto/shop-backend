@@ -1,4 +1,4 @@
-import { StoreEntity } from "../../entities";
+import { StoreEntity, UserEntity } from "../../entities";
 import { CustomError } from "../../errors/custom.error";
 import { IStoreRepository } from "../../repositories";
 
@@ -6,14 +6,24 @@ export class UpdateStore {
   constructor(private readonly storeRepository: IStoreRepository) {}
 
   async execute(
+    user: UserEntity,
     storeId: number,
     data: Partial<StoreEntity>
   ): Promise<StoreEntity> {
-    const existStore = this.storeRepository.verifyStoreExists(storeId);
-    if (!existStore)
-      throw CustomError.notFound(`Store: ${storeId} don't exists.`);
+    let userStoreId: number | null = null;
+    if (user.role === "STORE") {
+      const store = await this.storeRepository.getStoreByUser(user.id);
+      if (!store)
+        throw CustomError.notFound(`User's Store: "${user.id}" don't found.`);
+      userStoreId = store.id;
+    }
 
-    //todo: validate that user only can update its own store
+    // permissions
+    if (user.role !== "ADMIN" && userStoreId !== storeId) {
+      throw CustomError.forbidden(
+        "Unauthorize you not have permission to do this action."
+      );
+    }
 
     return await this.storeRepository.updateStore(storeId, data);
   }

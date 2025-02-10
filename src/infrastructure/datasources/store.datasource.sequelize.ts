@@ -107,14 +107,19 @@ export class StoreDataSource implements IStoreDataSource {
     data: Partial<StoreEntity>
   ): Promise<StoreEntity> {
     try {
-      const [updatedRows, [updatedStore]] = await StoreModel.update(data, {
-        where: { id: storeId, user_id: data.user_id },
+      // const [updatedRows, [updatedStore]] = await StoreModel.update(data, {
+      //   where: { id: storeId, user_id: data.user_id },
+      //   returning: true,
+      // });
+
+      // if (updatedRows === 0) {
+      //   throw CustomError.notFound("Store or user-store relation not exist.");
+      // }
+
+      const [, [updatedStore]] = await StoreModel.update(data, {
+        where: { id: storeId },
         returning: true,
       });
-
-      if (updatedRows === 0) {
-        throw CustomError.notFound("Store or user-store relation not exist.");
-      }
 
       return new StoreEntity(
         updatedStore.id!,
@@ -122,12 +127,18 @@ export class StoreDataSource implements IStoreDataSource {
         updatedStore.user_id
       );
     } catch (error) {
-      console.log({ error });
-      if (error instanceof Error) {
-        throw error;
-      }
-
+      // console.log({ error });
+      // if (error instanceof Error) {
+      //   throw error;
+      // }
+      console.log(error);
       throw CustomError.interlServerError();
+      // throw CustomError.interlServerError(
+      //   `Internal server error - ${JSON.stringify({
+      //     message: error instanceof Error ? error.message : "Unknown error",
+      //     stack: error instanceof Error ? error.stack : undefined,
+      //   })}`
+      // );
     }
   }
 }

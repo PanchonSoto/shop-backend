@@ -54,11 +54,11 @@ export class StoreController {
 
     const updateData: Partial<StoreFields> = {
       ...(name && { name }),
-      ...(user!.id && { user_id: user!.id }),
+      // ...(user!.id && { user_id: user!.id }),
     };
 
     new UpdateStore(this.storeRepository)
-      .execute(user!.id, updateData)
+      .execute(user!, storeId, updateData)
       .then((storeUpdated) => res.status(200).json(storeUpdated))
       .catch((error) => handleError(error, res));
   };
